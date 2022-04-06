@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Demo: Show changes over time with Mapbox GL JS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet"/>
+  <style>
+  body {margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;}
+  #map {position: absolute; top: 0; bottom: 0; width: 100%;}
+  h1 {font-size: 20px; line-height: 30px;}
+  h2 {font-size: 14px; line-height: 20px; margin-bottom: 10px;}
+  a {text-decoration: none; color: #2dc4b2;}
+  #console {position: absolute; margin: 10px; width: 20%; background-color: white; padding: 10px 20px;}
+  .session {margin-bottom: 20px;}
+  .row {height: 12px; width: 100%;}
+  .colors {background: linear-gradient(to right, #2dc4b2, #3bb3c3, #669ec4, #8b88b6, #a2719b, #aa5e79); margin-bottom: 5px;}
+  .label {width: 15%; display: inline-block; text-align: center;}
+  .mapboxgl-popup {max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;}
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <div id="console">
+    <h1>Snow</h1>
+    <p>Data: Sentinel - 2 - MosaicHub - between 2019 - 2022 </p>
+    <div class="session">
+      <h2>Year: <label id="active-year">2019</label></h2>
+      <input id="slider" class="row" type="range" min="2019" max="2022" step="1" value="2019"/>
+    </div>
+    <div class="session">
+      <h2>Filter by month</h2>
+      <div class="row" id="filters">
+        <input id="10" type="radio" name="toggle" value="Oct" />
+        <label for="10">Oct</label>
+        <input id="11" type="radio" name="toggle" value="Nov" />
+        <label for="11">Nov</label>
+        <input id="12" type="radio" name="toggle" value="Dec" />
+        <label for="12">Dec</label>
+        <input id="1" type="radio" name="toggle" value="Jan" />
+        <label for="1">Jan</label>
+        <input id="2" type="radio" name="toggle" value="Feb" />
+        <label for="2">Feb</label>
+        <input id="3" type="radio" name="toggle" value="Mar" />
+        <label for="3">Mar</label>
+      </div>
+    </div>
+  </div>
+  <script>
+  mapboxgl.accessToken = 'pk.eyJ1IjoiZ3VlcmN1c2d1byIsImEiOiJja29vYTVmdXIwMnJjMm5vanBrb2dwZmp1In0.GFGEzzSYk1QNXmqJ-9lhjA';
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/guercusguo/cl1g9886e002c16rz1w27q18q',
+    center: [7.46626,45.39133],
+    zoom: 8
+  });
+
+
+  const months = ['January' , 'February' , 'March' , 'April' , 'May' , 'June' , 'July' , 'August' , 'September' , 'October' , 'November' , 'December'];
+
+  map.on('load', () => {
+
+    let filterYear = ['!=', ['string', ['get', 'year_s']], '2019'];
+    let filterMonth = ['==', ['string', ['get', 'month_s']], 'placeholder'];
+
+    map.addSource('snow',{
+      'type':'geojson',
+      data: 'json/snow.geojson'
+    })
+    map.addSource('orco',{
+      'type':'geojson',
+      data: 'json/orco.geojson'
+    })
+    map.addSource('orco_base',{
+      'type':'geojson',
+      data: 'json/orco_base.geojson'
+    })
+    map.addSource('mapbox-dem', {
+      'type': 'raster-dem',
+      'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+      'tileSize': 512,
+      'maxzoom': 14
+    });
+    map.addLayer({
+      id: 'snow',
+      type: 'fill',
+      source: 'snow',
+      paint: {
+        'fill-color': '#f7f7f7',
+        'fill-opacity': 0.8
+      },
+      'filter': ['all', filterMonth, filterYear]
+    })
+    map.addLayer({
+      id: 'orco',
+      type: 'fill',
+      source: 'orco',
+      paint: {
+        'fill-color': '#67a9cf',
+        'fill-opacity': 0.2
+      }
+    })
+    map.addLayer({
+      id: 'orco_fill',
+      type: 'fill',
+      source: 'orco_base',
+      paint: {
+        'fill-color': '#ffffff',
+        'fill-opacity': 0
+      }
+    })
+    map.addLayer({
+      id: 'orco_base',
+      type: 'line',
+      source: 'orco_base',
+      paint: {
+        'line-color': '#ef8a62',
+        'line-width': 1,
+        'line-opacity': 1
+      }
+    });
+    map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+    // END of 3D properties
+    // update hour filter when the slider is dragged
+    document.getElementById('slider').addEventListener('input', (event) => {
+      map.addLayer({
+        'id': 'sky',
+        'type': 'sky',
+        'paint': {
+          'sky-opacity': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            0,
+            0,
+            5,
+            0.3,
+            8,
+            1
+          ],
+          'sky-type': 'atmosphere',
+          'sky-atmosphere-sun': [262.51, 17],
+          'sky-atmosphere-sun-intensity': 5
+        }
+      });
+      const year = event.target.value;
+      // update the map
+      filterYear = ['==', ['string', ['get', 'year_s']], year];
+      map.setFilter('snow', ['all', filterMonth, filterYear]);
+
+      // update text in the UI
+      document.getElementById('active-year').innerText = year;
+    });
+
+    document.getElementById('filters').addEventListener('change', (event) => {
+      const month = event.target.value;
+      // update the map filter
+      if (month === 'Oct') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['10'],
+          true,
+          false
+        ];
+      }
+      else if (month === 'Nov') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['11'],
+          true,
+          false
+        ];
+      }
+      else if (month === 'Dec') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['12'],
+          true,
+          false
+        ];
+      }
+      else if (month === 'Jan') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['1'],
+          true,
+          false
+        ];
+      }
+      else if (month === 'Feb') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['2'],
+          true,
+          false
+        ];
+      }
+      else if (month === 'Mar') {
+        filterMonth = [
+          'match',
+          ['get', 'month_s'],
+          ['3'],
+          true,
+          false
+        ];
+      }
+      else {
+        console.error('error');
+      }
+      map.setFilter('snow', ['all', filterMonth, filterYear]);
+    });
+  });
+  map.on('click', 'orco_fill', (e) => {
+    new mapboxgl.Popup()
+    .setLngLat(e.lngLat)
+    .setHTML(e.features[0].properties.nome)
+    .addTo(map);
+  });
+  map.on('mouseenter', 'orco_fill', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+  map.on('mouseleave', 'orco_fill', () => {
+    map.getCanvas().style.cursor = '';
+  });
+</script>
+</body>
+</html>
