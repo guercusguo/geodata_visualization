@@ -2,31 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Demo: Show changes over time with Mapbox GL JS</title>
+  <title>Snow Accumulation in Orco Valley</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
   <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <style>
-  body {margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;}
-  #map {position: absolute; top: 0; bottom: 0; width: 100%;}
-  h1 {font-size: 20px; line-height: 30px;}
-  h2 {font-size: 14px; line-height: 20px; margin-bottom: 10px;}
-  a {text-decoration: none; color: #2dc4b2;}
-  #console {display: inline-block; position: absolute; margin: 2%; width: 25%; background-color: white; padding: 10px 10px 10px 10px;}
-  .session {margin-bottom: 20px;}
-  .row {height: 12px; width: 100%;}
-  .colors {background: linear-gradient(to right, #2dc4b2, #3bb3c3, #669ec4, #8b88b6, #a2719b, #aa5e79); margin-bottom: 5px;}
-  .label {width: 15%; display: inline-block; text-align: center;}
-  .mapboxgl-popup {max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;}
-  </style>
+  <link href="css/snow.css" rel="stylesheet">
 </head>
 
 <body>
     <div id="map" class="container-fluid">
     </div>
-    <div class="row">
-    <div id="console" class="col-md-5 px-auto">
+    <div class="row-fluid">
+    <div id="console" class="col-md-5 px-auto d-flex flex-column">
       <h1>Snow accumulation in Orco Valley during Winter Season - Piedmont (Italy)</h1>
       <p>Data: Sentinel - 2 - MosaicHub - 2019 - 2022 </p>
       <div class="session">
@@ -35,7 +23,7 @@
       </div>
       <div class="session px-auto" id="buttons">
         <h2>Filter by month</h2>
-        <div id="filters" class="btn-group align-items-center" role="group">
+        <div id="filters" class=" btn-block align-items-center" role="group">
           <input id="1" type="button" name="toggle" value="Jan" class="btn btn-outline-primary map-button"/>
           <input id="2" type="button" name="toggle" value="Feb" class="btn btn-outline-primary map-button"/>
           <input id="3" type="button" name="toggle" value="Mar" class="btn btn-outline-primary map-button"/>

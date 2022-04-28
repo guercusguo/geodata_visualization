@@ -1,0 +1,18 @@
+body {margin: 0; padding: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;}
+#map {position: absolute; top: 0; bottom: 0; width: 100%;}
+h1 {font-size: 20px; line-height: 30px;}
+h2 {font-size: 14px; line-height: 20px; margin-bottom: 10px;}
+a {text-decoration: none; color: #2dc4b2;}
+#console {display: inline-block; position: absolute; width: 25%; background-color: white; padding: 10px 10px 10px 10px;}
+.session {margin-bottom: 20px;}
+.row {height: 12px; width: 100%;}
+.colors {background: linear-gradient(to right, #2dc4b2, #3bb3c3, #669ec4, #8b88b6, #a2719b, #aa5e79); margin-bottom: 5px;}
+.label {width: 15%; display: inline-block; text-align: center;}
+.mapboxgl-popup {max-width: 400px; font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;}
+@media (max-width: 768px) {
+  #map {position: fixed; top: 0; bottom: 0; width: 100%;}
+  section {padding: 5vw 5vw 95vh; border-bottom: 0px ;}
+  #console {display: inline-block; position: fixed; bottom:0%; width: 100%; background-color: rgba(255, 255, 255, 0.95);}
+  #console h1 {display: none !important;}
+  #console p {display: none !important;}
+}

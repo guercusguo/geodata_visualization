@@ -1,0 +1,9 @@
+body {font-family: 'Roboto', sans-serif;}
+a {color: #fff; text-decoration: none}
+a:hover {color: #078C8C; text-decoration: none;}
+.jumbotron h1, .bg-jumbotron p {text-shadow: rgba(0, 0, 0, 0.2) 2px 2px 2px;}
+.jumbotron h1 {font-size: 2.5rem;font-weight: 700}
+.jumbotron p {font-size: 13px; font-weight: 600}
+.bg-jumbotron {background: linear-gradient( rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25) ), url("assets/img/carto.webp"); background-size: cover; background-repeat: no-repeat;}
+.geographic-1 {background: linear-gradient( rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.25) ), url("assets/img/snow.webp"); background-size: cover; background-repeat: no-repeat; flex-basis: auto;}
+.shade{background-color: rgba(82,86,89,0.4); padding-left:2vw; padding-right:2vw;}
